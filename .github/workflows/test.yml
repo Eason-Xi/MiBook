@@ -1,0 +1,19 @@
+name: Tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  bridge-and-idle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: node --test bridge/*.test.mjs
+      - run: MIBOOK_JAVA_HOME="$JAVA_HOME" bash scripts/test-android.sh
+      - run: python3 scripts/check-publish.py
